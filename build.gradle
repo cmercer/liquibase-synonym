@@ -1,0 +1,17 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.6
+version = '1.0.0'
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile  (
+        'org.liquibase:liquibase-core:2.0.5',
+        'commons-lang:commons-lang:2.4'
+    )
+}

@@ -1,0 +1,15 @@
+# java stuff
+build
+target
+*.class
+
+#eclipse stuff
+.project
+.classpath
+.springbeans
+
+#intellij
+*.iml
+*.ipr
+*.iws
+.idea
