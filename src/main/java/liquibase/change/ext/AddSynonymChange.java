@@ -37,7 +37,7 @@ public class AddSynonymChange extends AbstractChange{
             table = sourceSchemaName + "." + sourceTableName;
         }
 
-        return format("Created synonym %1$S to table %2$S", schema, table);
+        return format("Created synonym '%1$S' for table '%2$S'", schema, table);
     }
 
     @Override
