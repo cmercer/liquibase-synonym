@@ -24,6 +24,21 @@ public class AddSynonymChange extends AbstractChange{
         super("addSynonym", "Add Synonym", 5);
     }
 
+    public AddSynonymChange(String sourceSchemaName, String sourceTableName, String schemaName, String synonymName) throws IllegalArgumentException {
+        super("addSynonym", "Add Synonym", 5);
+        if (trimToNull(sourceTableName) == null) {
+            throw new IllegalArgumentException("Source table name cannot be null or blank");
+        }
+        if (trimToNull(synonymName) == null) {
+            throw new IllegalArgumentException("Synonym name cannot be null or blank");
+        }
+        this.sourceSchemaName = sourceSchemaName;
+        this.sourceTableName = sourceTableName;
+        this.schemaName = schemaName;
+        this.synonymName = synonymName;
+    }
+
+
     @Override
     public String getConfirmationMessage() {
 
