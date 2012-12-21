@@ -1,5 +1,6 @@
 package liquibase.change.ext;
 
+import liquibase.exception.SetupException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -22,27 +23,31 @@ public class AddSynonymChangeTest {
     private static final String CONFIRMATION_MESSAGE_FULL_SYNONYM = CONFIRMATION_MESSAGE_START + FULL_SYNONYM + CONFIRMATION_MESSAGE_MIDDLE + SOURCE_TABLE + CONFIRMATION_MESSAGE_END;
     private static final String CONFIRMATION_MESSAGE_FULL_SOURCE_TABLE = CONFIRMATION_MESSAGE_START + SYNONYM + CONFIRMATION_MESSAGE_MIDDLE + FULL_SOURCE_TABLE + CONFIRMATION_MESSAGE_END;
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetConfirmationMessageWithNullSourceTable() {
+    @Test(expected = SetupException.class)
+    public void testGetConfirmationMessageWithNullSourceTable() throws SetupException {
         AddSynonymChange addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, null, SCHEMA, SYNONYM);
+        addSynonymChange.init();
         addSynonymChange.getConfirmationMessage();
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetConfirmationMessageWithNullSynonym() {
+    @Test(expected = SetupException.class)
+    public void testGetConfirmationMessageWithNullSynonym() throws SetupException {
         AddSynonymChange addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, null);
+        addSynonymChange.init();
         addSynonymChange.getConfirmationMessage();
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetConfirmationMessageWithBlankSourceTable() {
+    @Test(expected = SetupException.class)
+    public void testGetConfirmationMessageWithBlankSourceTable() throws SetupException {
         AddSynonymChange addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, BLANK, SCHEMA, SYNONYM);
+        addSynonymChange.init();
         addSynonymChange.getConfirmationMessage();
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetConfirmationMessageWithBlankSynonym() {
+    @Test(expected = SetupException.class)
+    public void testGetConfirmationMessageWithBlankSynonym() throws SetupException {
         AddSynonymChange addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, BLANK);
+        addSynonymChange.init();
         addSynonymChange.getConfirmationMessage();
     }
 
