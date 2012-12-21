@@ -25,13 +25,19 @@ public class AddSynonymChange extends AbstractChange{
 
     @Override
     public String getConfirmationMessage() {
-        return format(
-                "Created synonym %1$S.%2$S to %3$S.%4$S",
-                schemaName,
-                synonymName,
-                sourceSchemaName,
-                sourceTableName
-        );
+
+        String schema = synonymName;
+        String table = sourceTableName;
+
+        if(schemaName != null) {
+            schema = schemaName + "." + synonymName;
+        }
+
+        if(sourceSchemaName != null) {
+            table = sourceSchemaName + "." + sourceTableName;
+        }
+
+        return format("Created synonym %1$S to table %2$S", schema, table);
     }
 
     @Override
