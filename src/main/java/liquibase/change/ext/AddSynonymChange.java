@@ -4,13 +4,15 @@ import static java.lang.String.format;
 
 import liquibase.change.AbstractChange;
 import liquibase.database.Database;
+import liquibase.exception.SetupException;
 import liquibase.statement.SqlStatement;
+
 import static liquibase.util.StringUtils.trimToNull;
 
 /**
  *
  */
-public class AddSynonymChange extends AbstractChange{
+public class AddSynonymChange extends AbstractChange {
 
     private String sourceTableName;
 
@@ -26,12 +28,6 @@ public class AddSynonymChange extends AbstractChange{
 
     public AddSynonymChange(String sourceSchemaName, String sourceTableName, String schemaName, String synonymName) throws IllegalArgumentException {
         super("addSynonym", "Add Synonym", 5);
-        if (trimToNull(sourceTableName) == null) {
-            throw new IllegalArgumentException("Source table name cannot be null or blank");
-        }
-        if (trimToNull(synonymName) == null) {
-            throw new IllegalArgumentException("Synonym name cannot be null or blank");
-        }
         this.sourceSchemaName = sourceSchemaName;
         this.sourceTableName = sourceTableName;
         this.schemaName = schemaName;
@@ -41,13 +37,10 @@ public class AddSynonymChange extends AbstractChange{
 
     @Override
     public String getConfirmationMessage() {
-
-        validate();
-
-		String sourceSchema = trimToNull(sourceSchemaName);
+        String sourceSchema = trimToNull(sourceSchemaName);
         String sourceTable = trimToNull(sourceTableName);
-		String schema = trimToNull(schemaName);
-		String synonym = trimToNull(synonymName);
+        String schema = trimToNull(schemaName);
+        String synonym = trimToNull(synonymName);
 
         if (schema != null) {
             synonym = schema + "." + synonym;
@@ -74,35 +67,29 @@ public class AddSynonymChange extends AbstractChange{
         }
     }
 
-    public String getSourceTableName() {
-        return sourceTableName;
+    @Override
+    public void init() throws SetupException {
+        try {
+            validate();
+        } catch (AssertionError e) {
+            throw new SetupException(e.getMessage());
+        }
     }
 
-    public void setSourceTableName(String sourceTableName) {
-        this.sourceTableName = sourceTableName;
+    public String getSourceTableName() {
+        return sourceTableName;
     }
 
     public String getSourceSchemaName() {
         return sourceSchemaName;
     }
 
-    public void setSourceSchemaName(String sourceSchemaName) {
-        this.sourceSchemaName = sourceSchemaName;
-    }
-
     public String getSynonymName() {
         return synonymName;
-    }
-
-    public void setSynonymName(String synonymName) {
-        this.synonymName = synonymName;
     }
 
     public String getSchemaName() {
         return schemaName;
     }
 
-    public void setSchemaName(String schemaName) {
-        this.schemaName = schemaName;
-    }
 }
