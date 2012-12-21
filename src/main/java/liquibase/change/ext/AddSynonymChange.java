@@ -11,6 +11,8 @@ import liquibase.statement.SqlStatement;
 import static liquibase.util.StringUtils.trimToNull;
 
 /**
+ * Adds a synonym to the database.
+ * Checks to make sure that the database being used support synonyms.
  *
  */
 public class AddSynonymChange extends AbstractChange {
