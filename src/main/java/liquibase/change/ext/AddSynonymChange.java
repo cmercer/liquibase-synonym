@@ -29,7 +29,13 @@ public class AddSynonymChange extends AbstractChange {
         super("addSynonym", "Add Synonym", ChangeMetaData.PRIORITY_DEFAULT);
     }
 
-    public AddSynonymChange(String sourceSchemaName, String sourceTableName, String schemaName, String synonymName) throws IllegalArgumentException {
+    public AddSynonymChange(
+            String sourceSchemaName,
+            String sourceTableName,
+            String schemaName,
+            String synonymName
+    ) throws IllegalArgumentException {
+
         super("addSynonym", "Add Synonym", 5);
         this.sourceSchemaName = sourceSchemaName;
         this.sourceTableName = sourceTableName;
