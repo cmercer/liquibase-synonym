@@ -3,6 +3,7 @@ package liquibase.change.ext;
 import static java.lang.String.format;
 
 import liquibase.change.AbstractChange;
+import liquibase.change.ChangeMetaData;
 import liquibase.database.Database;
 import liquibase.exception.SetupException;
 import liquibase.statement.SqlStatement;
@@ -23,7 +24,7 @@ public class AddSynonymChange extends AbstractChange {
     private String schemaName;
 
     protected AddSynonymChange() {
-        super("addSynonym", "Add Synonym", 5);
+        super("addSynonym", "Add Synonym", ChangeMetaData.PRIORITY_DEFAULT);
     }
 
     public AddSynonymChange(String sourceSchemaName, String sourceTableName, String schemaName, String synonymName) throws IllegalArgumentException {
