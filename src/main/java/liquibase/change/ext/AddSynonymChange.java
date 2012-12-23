@@ -82,7 +82,7 @@ public class AddSynonymChange extends AbstractChange {
                 || "db2".equalsIgnoreCase(database.getTypeName())
                 || "derby".equalsIgnoreCase(database.getTypeName())
                 || "informix".equalsIgnoreCase(database.getTypeName())
-                || "maxdbdatabase".equalsIgnoreCase(database.getTypeName()));
+                || "maxdb".equalsIgnoreCase(database.getTypeName()));
     }
 
     public String getSourceTableName() {
