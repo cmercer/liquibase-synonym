@@ -1,9 +1,13 @@
 package liquibase.change.ext;
 
+import liquibase.database.Database;
+import liquibase.database.core.*;
 import liquibase.exception.SetupException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class AddSynonymChangeTest {
 
@@ -53,8 +57,8 @@ public class AddSynonymChangeTest {
 
     @Test
     public void testGetConfirmationMessage() {
-        String confirmationMessage = null;
-        AddSynonymChange addSynonymChange = null;
+        String confirmationMessage;
+        AddSynonymChange addSynonymChange;
 
         addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
         confirmationMessage = addSynonymChange.getConfirmationMessage();
@@ -69,4 +73,22 @@ public class AddSynonymChangeTest {
         assertEquals("Confirmation message should properly reflect fully-qualified source table", CONFIRMATION_MESSAGE_FULL_SOURCE_TABLE, confirmationMessage);
     }
 
+    @Test
+    public void testSupportsDatabase() {
+        Database oracle = new OracleDatabase();
+        Database mssql = new MSSQLDatabase();
+        Database db2 = new DB2Database();
+        Database derby = new DerbyDatabase();
+        Database informix = new InformixDatabase();
+        Database maxdb = new MaxDBDatabase();
+        Database hsql = new HsqlDatabase();
+        AddSynonymChange addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
+        assertTrue("AddSynonymChange should support Oracle", addSynonymChange.supportsDatabase(oracle));
+        assertTrue("AddSynonymChange should support MSSQL", addSynonymChange.supportsDatabase(mssql));
+        assertTrue("AddSynonymChange should support DB2", addSynonymChange.supportsDatabase(db2));
+        assertTrue("AddSynonymChange should support Derby", addSynonymChange.supportsDatabase(derby));
+        assertTrue("AddSynonymChange should support Informix", addSynonymChange.supportsDatabase(informix));
+        assertTrue("AddSynonymChange should support MaxDB", addSynonymChange.supportsDatabase(maxdb));
+        assertFalse("AddSynonymChange should not support HSQL", addSynonymChange.supportsDatabase(hsql));
+    }
 }
