@@ -84,6 +84,15 @@ public class AddSynonymChange extends AbstractChange {
         }
     }
 
+    protected boolean supportsDatabase(Database database) {
+        return ("oracle".equalsIgnoreCase(database.getTypeName())
+                || "mssql".equalsIgnoreCase(database.getTypeName())
+                || "db2".equalsIgnoreCase(database.getTypeName())
+                || "derby".equalsIgnoreCase(database.getTypeName())
+                || "informix".equalsIgnoreCase(database.getTypeName())
+                || "maxdb".equalsIgnoreCase(database.getTypeName()));
+    }
+
     public String getSourceTableName() {
         return sourceTableName;
     }
