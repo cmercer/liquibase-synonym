@@ -24,6 +24,10 @@ public class AddSynonymChange extends AbstractChange {
 
     private String schemaName;
 
+    private String sourceServerName;
+
+    private String sourceDatabaseName;
+
     protected AddSynonymChange() {
         super("addSynonym", "Add Synonym", ChangeMetaData.PRIORITY_DEFAULT);
     }
@@ -33,18 +37,36 @@ public class AddSynonymChange extends AbstractChange {
             String sourceTableName,
             String schemaName,
             String synonymName
-    ) throws IllegalArgumentException {
+    ) {
 
-        super("addSynonym", "Add Synonym", 5);
+        super("addSynonym", "Add Synonym", ChangeMetaData.PRIORITY_DEFAULT);
         this.sourceSchemaName = sourceSchemaName;
         this.sourceTableName = sourceTableName;
         this.schemaName = schemaName;
         this.synonymName = synonymName;
     }
 
+    public AddSynonymChange(
+            String sourceServerName,
+            String sourceDatabaseName,
+            String sourceSchemaName,
+            String sourceTableName,
+            String schemaName,
+            String synonymName
+    ) {
+        super("addSynonym", "Add Synonym", ChangeMetaData.PRIORITY_DEFAULT);
+        this.sourceServerName = sourceServerName;
+        this.sourceDatabaseName = sourceDatabaseName;
+        this.sourceSchemaName = sourceSchemaName;
+        this.sourceTableName = sourceTableName;
+        this.schemaName = schemaName;
+        this.synonymName = synonymName;
+    }
 
     @Override
     public String getConfirmationMessage() {
+        String sourceServer = trimToNull(sourceServerName);
+        String sourceDatabase = trimToNull(sourceDatabaseName);
         String sourceSchema = trimToNull(sourceSchemaName);
         String sourceTable = trimToNull(sourceTableName);
         String schema = trimToNull(schemaName);
@@ -56,6 +78,15 @@ public class AddSynonymChange extends AbstractChange {
 
         if (sourceSchema != null) {
             sourceTable = sourceSchema + "." + sourceTable;
+        }
+
+        if (sourceDatabase != null) {
+            if (sourceServer != null) {
+                sourceTable = sourceServer + "." + sourceDatabase + "." + sourceTable;
+            } else {
+                sourceTable = sourceDatabase + "." + sourceTable;
+            }
+
         }
 
         return format("Created synonym '%1$S' for table '%2$S'", synonym, sourceTable);
@@ -72,6 +103,9 @@ public class AddSynonymChange extends AbstractChange {
         }
         if (trimToNull(sourceTableName) == null) {
             throw new AssertionError("Source table name cannot be null");
+        }
+        if (trimToNull(sourceServerName) != null && trimToNull(sourceDatabaseName) == null) {
+            throw new AssertionError("If a source server is provided, a source database must also be provided");
         }
     }
 
@@ -107,6 +141,14 @@ public class AddSynonymChange extends AbstractChange {
 
     public String getSchemaName() {
         return schemaName;
+    }
+
+    public String getSourceServerName() {
+        return sourceServerName;
+    }
+
+    public String getSourceDatabaseName() {
+        return sourceDatabaseName;
     }
 
 }
