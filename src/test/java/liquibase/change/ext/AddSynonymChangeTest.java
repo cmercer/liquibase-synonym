@@ -17,6 +17,10 @@ public class AddSynonymChangeTest {
     private static final String SCHEMA = "SCHEMA";
     private static final String SYNONYM = "SYNONYM";
     private static final String FULL_SYNONYM = SCHEMA + "." + SYNONYM;
+    private static final String SOURCE_SERVER = "SOURCE_SERVER";
+    private static final String SOURCE_DATABASE = "SOURCE_DATABASE";
+    private static final String SQLSERVER_PARTIAL_SOURCE_TABLE = SOURCE_DATABASE + "." + FULL_SOURCE_TABLE;
+    private static final String SQLSERVER_FULL_SOURCE_TABLE = SOURCE_SERVER + "." + SQLSERVER_PARTIAL_SOURCE_TABLE;
     private static final String BLANK = "";
 
     private static final String CONFIRMATION_MESSAGE_START = "Created synonym '";
@@ -26,6 +30,8 @@ public class AddSynonymChangeTest {
     private static final String CONFIRMATION_MESSAGE_ALL_COMPONENTS = CONFIRMATION_MESSAGE_START + FULL_SYNONYM + CONFIRMATION_MESSAGE_MIDDLE + FULL_SOURCE_TABLE + CONFIRMATION_MESSAGE_END;
     private static final String CONFIRMATION_MESSAGE_FULL_SYNONYM = CONFIRMATION_MESSAGE_START + FULL_SYNONYM + CONFIRMATION_MESSAGE_MIDDLE + SOURCE_TABLE + CONFIRMATION_MESSAGE_END;
     private static final String CONFIRMATION_MESSAGE_FULL_SOURCE_TABLE = CONFIRMATION_MESSAGE_START + SYNONYM + CONFIRMATION_MESSAGE_MIDDLE + FULL_SOURCE_TABLE + CONFIRMATION_MESSAGE_END;
+    private static final String CONFIRMATION_MESSAGE_SQLSERVER_PARTIAL_SOURCE_TABLE = CONFIRMATION_MESSAGE_START + FULL_SYNONYM + CONFIRMATION_MESSAGE_MIDDLE + SQLSERVER_PARTIAL_SOURCE_TABLE + CONFIRMATION_MESSAGE_END;
+    private static final String CONFIRMATION_MESSAGE_SQLSERVER_FULL_SOURCE_TABLE = CONFIRMATION_MESSAGE_START + FULL_SYNONYM + CONFIRMATION_MESSAGE_MIDDLE + SQLSERVER_FULL_SOURCE_TABLE + CONFIRMATION_MESSAGE_END;
 
     @Test(expected = SetupException.class)
     public void testGetConfirmationMessageWithNullSourceTable() throws SetupException {
@@ -55,6 +61,13 @@ public class AddSynonymChangeTest {
         addSynonymChange.getConfirmationMessage();
     }
 
+    @Test(expected = SetupException.class)
+    public void testGetConfirmationMessageWithIncorrectSqlServerParams() throws SetupException {
+        AddSynonymChange addSynonymChange = new AddSynonymChange(SOURCE_SERVER, BLANK, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
+        addSynonymChange.init();
+        addSynonymChange.getConfirmationMessage();
+    }
+
     @Test
     public void testGetConfirmationMessage() {
         String confirmationMessage;
@@ -71,6 +84,14 @@ public class AddSynonymChangeTest {
         addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, null, SYNONYM);
         confirmationMessage = addSynonymChange.getConfirmationMessage();
         assertEquals("Confirmation message should properly reflect fully-qualified source table", CONFIRMATION_MESSAGE_FULL_SOURCE_TABLE, confirmationMessage);
+
+        addSynonymChange = new AddSynonymChange(BLANK, SOURCE_DATABASE, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
+        confirmationMessage = addSynonymChange.getConfirmationMessage();
+        assertEquals("Confirmation message should properly reflect partially-qualified SQL Server source table", CONFIRMATION_MESSAGE_SQLSERVER_PARTIAL_SOURCE_TABLE, confirmationMessage);
+
+        addSynonymChange = new AddSynonymChange(SOURCE_SERVER, SOURCE_DATABASE, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
+        confirmationMessage = addSynonymChange.getConfirmationMessage();
+        assertEquals("Confirmation message should properly reflect fully-qualified SQL Server source table", CONFIRMATION_MESSAGE_SQLSERVER_FULL_SOURCE_TABLE, confirmationMessage);
     }
 
     @Test
