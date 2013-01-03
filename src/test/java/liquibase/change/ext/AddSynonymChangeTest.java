@@ -3,11 +3,10 @@ package liquibase.change.ext;
 import liquibase.database.Database;
 import liquibase.database.core.*;
 import liquibase.exception.SetupException;
+import liquibase.statement.SqlStatement;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class AddSynonymChangeTest {
 
@@ -111,5 +110,16 @@ public class AddSynonymChangeTest {
         assertTrue("AddSynonymChange should support Informix", addSynonymChange.supportsDatabase(informix));
         assertTrue("AddSynonymChange should support MaxDB", addSynonymChange.supportsDatabase(maxdb));
         assertFalse("AddSynonymChange should not support HSQL", addSynonymChange.supportsDatabase(hsql));
+    }
+
+    @Test
+    public void testGenerateStatements() {
+        Database oracle = new OracleDatabase();
+        AddSynonymChange addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
+        SqlStatement[] sqlStatements = addSynonymChange.generateStatements(oracle);
+        assertNotNull("generateStatements() should generate an array of SQL statements", sqlStatements);
+        assertTrue("generateStatements() should generate exactly one SQL statement", sqlStatements.length == 1);
+
+        SqlStatement statement = sqlStatements[0];
     }
 }
