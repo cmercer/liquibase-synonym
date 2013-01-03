@@ -5,6 +5,12 @@ import static java.lang.String.format;
 import liquibase.change.AbstractChange;
 import liquibase.change.ChangeMetaData;
 import liquibase.database.Database;
+import liquibase.database.core.DB2Database;
+import liquibase.database.core.DerbyDatabase;
+import liquibase.database.core.InformixDatabase;
+import liquibase.database.core.MSSQLDatabase;
+import liquibase.database.core.MaxDBDatabase;
+import liquibase.database.core.OracleDatabase;
 import liquibase.exception.SetupException;
 import liquibase.statement.SqlStatement;
 
@@ -28,7 +34,7 @@ public class AddSynonymChange extends AbstractChange {
 
     private String sourceDatabaseName;
 
-    protected AddSynonymChange() {
+
     public AddSynonymChange() {
         super("addSynonym", "Add Synonym", ChangeMetaData.PRIORITY_DEFAULT);
     }
@@ -120,12 +126,24 @@ public class AddSynonymChange extends AbstractChange {
     }
 
     protected boolean supportsDatabase(Database database) {
-        return ("oracle".equalsIgnoreCase(database.getTypeName())
-                || "mssql".equalsIgnoreCase(database.getTypeName())
-                || "db2".equalsIgnoreCase(database.getTypeName())
-                || "derby".equalsIgnoreCase(database.getTypeName())
-                || "informix".equalsIgnoreCase(database.getTypeName())
-                || "maxdb".equalsIgnoreCase(database.getTypeName()));
+
+        boolean supported = false;
+
+        if(database instanceof OracleDatabase) {
+            supported = true;
+        } else if(database instanceof MSSQLDatabase) {
+            supported = true;
+        } else if(database instanceof DB2Database) {
+            supported = true;
+        } else if(database instanceof DerbyDatabase) {
+            supported = true;
+        } else if(database instanceof InformixDatabase) {
+            supported = true;
+        } else if(database instanceof  MaxDBDatabase) {
+            supported = true;
+        }
+
+        return supported;
     }
 
     public String getSourceTableName() {
