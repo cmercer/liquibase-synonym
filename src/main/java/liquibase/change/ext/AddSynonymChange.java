@@ -5,19 +5,10 @@ import static java.lang.String.format;
 import liquibase.change.AbstractChange;
 import liquibase.change.ChangeMetaData;
 import liquibase.database.Database;
-import liquibase.database.core.DB2Database;
-import liquibase.database.core.DerbyDatabase;
-import liquibase.database.core.InformixDatabase;
-import liquibase.database.core.MSSQLDatabase;
-import liquibase.database.core.MaxDBDatabase;
-import liquibase.database.core.OracleDatabase;
 import liquibase.exception.SetupException;
 import liquibase.statement.SqlStatement;
 
 import static liquibase.util.StringUtils.trimToNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Adds a synonym to the database.
@@ -33,6 +24,11 @@ public class AddSynonymChange extends AbstractChange {
 
     private String schemaName;
 
+    private String sourceServerName;
+
+    private String sourceDatabaseName;
+
+    protected AddSynonymChange() {
     public AddSynonymChange() {
         super("addSynonym", "Add Synonym", ChangeMetaData.PRIORITY_DEFAULT);
     }
@@ -51,9 +47,27 @@ public class AddSynonymChange extends AbstractChange {
         this.synonymName = synonymName;
     }
 
+    public AddSynonymChange(
+            String sourceServerName,
+            String sourceDatabaseName,
+            String sourceSchemaName,
+            String sourceTableName,
+            String schemaName,
+            String synonymName
+    ) {
+        super("addSynonym", "Add Synonym", ChangeMetaData.PRIORITY_DEFAULT);
+        this.sourceServerName = sourceServerName;
+        this.sourceDatabaseName = sourceDatabaseName;
+        this.sourceSchemaName = sourceSchemaName;
+        this.sourceTableName = sourceTableName;
+        this.schemaName = schemaName;
+        this.synonymName = synonymName;
+    }
 
     @Override
     public String getConfirmationMessage() {
+        String sourceServer = trimToNull(sourceServerName);
+        String sourceDatabase = trimToNull(sourceDatabaseName);
         String sourceSchema = trimToNull(sourceSchemaName);
         String sourceTable = trimToNull(sourceTableName);
         String schema = trimToNull(schemaName);
@@ -65,6 +79,15 @@ public class AddSynonymChange extends AbstractChange {
 
         if (sourceSchema != null) {
             sourceTable = sourceSchema + "." + sourceTable;
+        }
+
+        if (sourceDatabase != null) {
+            if (sourceServer != null) {
+                sourceTable = sourceServer + "." + sourceDatabase + "." + sourceTable;
+            } else {
+                sourceTable = sourceDatabase + "." + sourceTable;
+            }
+
         }
 
         return format("Created synonym '%1$S' for table '%2$S'", synonym, sourceTable);
@@ -82,6 +105,9 @@ public class AddSynonymChange extends AbstractChange {
         if (trimToNull(sourceTableName) == null) {
             throw new AssertionError("Source table name cannot be null");
         }
+        if (trimToNull(sourceServerName) != null && trimToNull(sourceDatabaseName) == null) {
+            throw new AssertionError("If a source server is provided, a source database must also be provided");
+        }
     }
 
     @Override
@@ -94,24 +120,12 @@ public class AddSynonymChange extends AbstractChange {
     }
 
     protected boolean supportsDatabase(Database database) {
-
-        boolean supported = false;
-
-        if(database instanceof OracleDatabase) {
-            supported = true;
-        } else if(database instanceof MSSQLDatabase) {
-            supported = true;
-        } else if(database instanceof DB2Database) {
-            supported = true;
-        } else if(database instanceof DerbyDatabase) {
-            supported = true;
-        } else if(database instanceof InformixDatabase) {
-            supported = true;
-        } else if(database instanceof  MaxDBDatabase) {
-            supported = true;
-        }
-
-        return supported;
+        return ("oracle".equalsIgnoreCase(database.getTypeName())
+                || "mssql".equalsIgnoreCase(database.getTypeName())
+                || "db2".equalsIgnoreCase(database.getTypeName())
+                || "derby".equalsIgnoreCase(database.getTypeName())
+                || "informix".equalsIgnoreCase(database.getTypeName())
+                || "maxdb".equalsIgnoreCase(database.getTypeName()));
     }
 
     public String getSourceTableName() {
