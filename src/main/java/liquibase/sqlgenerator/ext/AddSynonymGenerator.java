@@ -29,6 +29,12 @@ public class AddSynonymGenerator extends AbstractSqlGenerator<AddSynonymStatemen
         }
         builder.append(statement.getSynonymName());
         builder.append(" FOR ");
+        if (trimToNull(statement.getSourceDatabaseName()) != null) {
+            if (trimToNull(statement.getSourceServerName()) != null) {
+                builder.append(statement.getSourceServerName()).append(".");
+            }
+            builder.append(statement.getSourceDatabaseName()).append(".");
+        }
         if (trimToNull(statement.getSourceSchemaName()) != null) {
             builder.append(statement.getSourceSchemaName()).append(".");
         }
