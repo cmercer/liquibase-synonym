@@ -15,3 +15,6 @@ out
 *.ipr
 *.iws
 .idea
+
+#local gradle properties file
+gradle.properties
