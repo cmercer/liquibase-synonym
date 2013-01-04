@@ -8,7 +8,7 @@ import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.AbstractSqlGenerator;
 import liquibase.statement.ext.AddSynonymStatement;
 
-import static org.apache.commons.lang.StringUtils.trimToNull;
+import static liquibase.util.StringUtils.trimToNull;
 
 public class AddSynonymGenerator extends AbstractSqlGenerator<AddSynonymStatement> {
 
