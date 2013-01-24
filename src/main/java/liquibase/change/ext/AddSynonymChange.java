@@ -13,6 +13,7 @@ import liquibase.database.core.MaxDBDatabase;
 import liquibase.database.core.OracleDatabase;
 import liquibase.exception.SetupException;
 import liquibase.statement.SqlStatement;
+import liquibase.statement.ext.AddSynonymStatement;
 
 import static liquibase.util.StringUtils.trimToNull;
 
@@ -101,7 +102,17 @@ public class AddSynonymChange extends AbstractChange {
 
     @Override
     public SqlStatement[] generateStatements(Database database) {
-        return new SqlStatement[0];
+        SqlStatement[] sqlStatements;
+        if (sourceDatabaseName != null) {
+            sqlStatements = new SqlStatement[] {
+                new AddSynonymStatement(sourceServerName, sourceDatabaseName, sourceSchemaName, sourceTableName, schemaName, synonymName)
+            };
+        } else {
+            sqlStatements = new SqlStatement[] {
+                new AddSynonymStatement(sourceSchemaName, sourceTableName, schemaName, synonymName)
+            };
+        }
+        return sqlStatements;
     }
 
     private void validate() {
