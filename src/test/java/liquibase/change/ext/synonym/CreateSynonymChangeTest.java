@@ -1,4 +1,4 @@
-package liquibase.change.ext;
+package liquibase.change.ext.synonym;
 
 import liquibase.database.Database;
 import liquibase.database.core.*;
@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class AddSynonymChangeTest {
+public class CreateSynonymChangeTest {
 
     private static final String SOURCE_SCHEMA = "SOURCE_SCHEMA";
     private static final String SOURCE_TABLE = "SOURCE_TABLE";
@@ -34,62 +34,62 @@ public class AddSynonymChangeTest {
 
     @Test(expected = SetupException.class)
     public void testGetConfirmationMessageWithNullSourceTable() throws SetupException {
-        AddSynonymChange addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, null, SCHEMA, SYNONYM);
-        addSynonymChange.init();
-        addSynonymChange.getConfirmationMessage();
+        CreateSynonymChange createSynonymChange = new CreateSynonymChange(SOURCE_SCHEMA, null, SCHEMA, SYNONYM);
+        createSynonymChange.init();
+        createSynonymChange.getConfirmationMessage();
     }
 
     @Test(expected = SetupException.class)
     public void testGetConfirmationMessageWithNullSynonym() throws SetupException {
-        AddSynonymChange addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, null);
-        addSynonymChange.init();
-        addSynonymChange.getConfirmationMessage();
+        CreateSynonymChange createSynonymChange = new CreateSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, null);
+        createSynonymChange.init();
+        createSynonymChange.getConfirmationMessage();
     }
 
     @Test(expected = SetupException.class)
     public void testGetConfirmationMessageWithBlankSourceTable() throws SetupException {
-        AddSynonymChange addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, BLANK, SCHEMA, SYNONYM);
-        addSynonymChange.init();
-        addSynonymChange.getConfirmationMessage();
+        CreateSynonymChange createSynonymChange = new CreateSynonymChange(SOURCE_SCHEMA, BLANK, SCHEMA, SYNONYM);
+        createSynonymChange.init();
+        createSynonymChange.getConfirmationMessage();
     }
 
     @Test(expected = SetupException.class)
     public void testGetConfirmationMessageWithBlankSynonym() throws SetupException {
-        AddSynonymChange addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, BLANK);
-        addSynonymChange.init();
-        addSynonymChange.getConfirmationMessage();
+        CreateSynonymChange createSynonymChange = new CreateSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, BLANK);
+        createSynonymChange.init();
+        createSynonymChange.getConfirmationMessage();
     }
 
     @Test(expected = SetupException.class)
     public void testGetConfirmationMessageWithIncorrectSqlServerParams() throws SetupException {
-        AddSynonymChange addSynonymChange = new AddSynonymChange(SOURCE_SERVER, BLANK, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
-        addSynonymChange.init();
-        addSynonymChange.getConfirmationMessage();
+        CreateSynonymChange createSynonymChange = new CreateSynonymChange(SOURCE_SERVER, BLANK, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
+        createSynonymChange.init();
+        createSynonymChange.getConfirmationMessage();
     }
 
     @Test
     public void testGetConfirmationMessage() {
         String confirmationMessage;
-        AddSynonymChange addSynonymChange;
+        CreateSynonymChange createSynonymChange;
 
-        addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
-        confirmationMessage = addSynonymChange.getConfirmationMessage();
+        createSynonymChange = new CreateSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
+        confirmationMessage = createSynonymChange.getConfirmationMessage();
         assertEquals("Confirmation message should properly reflect all components", CONFIRMATION_MESSAGE_ALL_COMPONENTS, confirmationMessage);
 
-        addSynonymChange = new AddSynonymChange(null, SOURCE_TABLE, SCHEMA, SYNONYM);
-        confirmationMessage = addSynonymChange.getConfirmationMessage();
+        createSynonymChange = new CreateSynonymChange(null, SOURCE_TABLE, SCHEMA, SYNONYM);
+        confirmationMessage = createSynonymChange.getConfirmationMessage();
         assertEquals("Confirmation message should properly reflect fully-qualified synonym", CONFIRMATION_MESSAGE_FULL_SYNONYM, confirmationMessage);
 
-        addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, null, SYNONYM);
-        confirmationMessage = addSynonymChange.getConfirmationMessage();
+        createSynonymChange = new CreateSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, null, SYNONYM);
+        confirmationMessage = createSynonymChange.getConfirmationMessage();
         assertEquals("Confirmation message should properly reflect fully-qualified source table", CONFIRMATION_MESSAGE_FULL_SOURCE_TABLE, confirmationMessage);
 
-        addSynonymChange = new AddSynonymChange(BLANK, SOURCE_DATABASE, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
-        confirmationMessage = addSynonymChange.getConfirmationMessage();
+        createSynonymChange = new CreateSynonymChange(BLANK, SOURCE_DATABASE, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
+        confirmationMessage = createSynonymChange.getConfirmationMessage();
         assertEquals("Confirmation message should properly reflect partially-qualified SQL Server source table", CONFIRMATION_MESSAGE_SQLSERVER_PARTIAL_SOURCE_TABLE, confirmationMessage);
 
-        addSynonymChange = new AddSynonymChange(SOURCE_SERVER, SOURCE_DATABASE, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
-        confirmationMessage = addSynonymChange.getConfirmationMessage();
+        createSynonymChange = new CreateSynonymChange(SOURCE_SERVER, SOURCE_DATABASE, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
+        confirmationMessage = createSynonymChange.getConfirmationMessage();
         assertEquals("Confirmation message should properly reflect fully-qualified SQL Server source table", CONFIRMATION_MESSAGE_SQLSERVER_FULL_SOURCE_TABLE, confirmationMessage);
     }
 
@@ -102,24 +102,26 @@ public class AddSynonymChangeTest {
         Database informix = new InformixDatabase();
         Database maxdb = new MaxDBDatabase();
         Database hsql = new HsqlDatabase();
-        AddSynonymChange addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
-        assertTrue("AddSynonymChange should support Oracle", addSynonymChange.supportsDatabase(oracle));
-        assertTrue("AddSynonymChange should support MSSQL", addSynonymChange.supportsDatabase(mssql));
-        assertTrue("AddSynonymChange should support DB2", addSynonymChange.supportsDatabase(db2));
-        assertTrue("AddSynonymChange should support Derby", addSynonymChange.supportsDatabase(derby));
-        assertTrue("AddSynonymChange should support Informix", addSynonymChange.supportsDatabase(informix));
-        assertTrue("AddSynonymChange should support MaxDB", addSynonymChange.supportsDatabase(maxdb));
-        assertFalse("AddSynonymChange should not support HSQL", addSynonymChange.supportsDatabase(hsql));
+        CreateSynonymChange createSynonymChange = new CreateSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
+        assertTrue("CreateSynonymChange should support Oracle", createSynonymChange.supportsDatabase(oracle));
+        assertTrue("CreateSynonymChange should support MSSQL", createSynonymChange.supportsDatabase(mssql));
+        assertTrue("CreateSynonymChange should support DB2", createSynonymChange.supportsDatabase(db2));
+        assertTrue("CreateSynonymChange should support Derby", createSynonymChange.supportsDatabase(derby));
+        assertTrue("CreateSynonymChange should support Informix", createSynonymChange.supportsDatabase(informix));
+        assertTrue("CreateSynonymChange should support MaxDB", createSynonymChange.supportsDatabase(maxdb));
+        assertFalse("CreateSynonymChange should not support HSQL", createSynonymChange.supportsDatabase(hsql));
     }
 
     @Test
     public void testGenerateStatements() {
         Database oracle = new OracleDatabase();
-        AddSynonymChange addSynonymChange = new AddSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
-        SqlStatement[] sqlStatements = addSynonymChange.generateStatements(oracle);
+        CreateSynonymChange createSynonymChange = new CreateSynonymChange(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
+        SqlStatement[] sqlStatements = createSynonymChange.generateStatements(oracle);
         assertNotNull("generateStatements() should generate an array of SQL statements", sqlStatements);
         assertTrue("generateStatements() should generate exactly one SQL statement", sqlStatements.length == 1);
 
         SqlStatement statement = sqlStatements[0];
+        assertNotNull(statement);
+        assertTrue(statement.toString().length() > 0);
     }
 }

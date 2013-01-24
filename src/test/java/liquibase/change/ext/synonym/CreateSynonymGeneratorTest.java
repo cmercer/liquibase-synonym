@@ -1,18 +1,15 @@
-package liquibase.sqlgenerator.ext;
+package liquibase.change.ext.synonym;
 
-import liquibase.change.ext.AddSynonymChange;
 import liquibase.database.Database;
 import liquibase.database.core.MSSQLDatabase;
 import liquibase.database.core.OracleDatabase;
 import liquibase.sql.Sql;
 import liquibase.statement.SqlStatement;
-import liquibase.statement.ext.AddSynonymStatement;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class AddSynonymGeneratorTest {
+public class CreateSynonymGeneratorTest {
 
     private static final String SOURCE_SCHEMA = "SOURCE_SCHEMA";
     private static final String SOURCE_TABLE = "SOURCE_TABLE";
@@ -64,19 +61,19 @@ public class AddSynonymGeneratorTest {
     }
 
     private Sql produceSqlStatement(String sourceSchema, String sourceTable, String schema, String synonym, Database database) {
-        AddSynonymChange addSynonymChange = new AddSynonymChange(sourceSchema, sourceTable, schema, synonym);
-        return produceSqlStatement(addSynonymChange, database);
+        CreateSynonymChange createSynonymChange = new CreateSynonymChange(sourceSchema, sourceTable, schema, synonym);
+        return produceSqlStatement(createSynonymChange, database);
     }
 
     private Sql produceSqlStatement(String sourceServer, String sourceDatabase, String sourceSchema, String sourceTable, String schema, String synonym, Database database) {
-        AddSynonymChange addSynonymChange = new AddSynonymChange(sourceServer, sourceDatabase, sourceSchema, sourceTable, schema, synonym);
-        return produceSqlStatement(addSynonymChange, database);
+        CreateSynonymChange createSynonymChange = new CreateSynonymChange(sourceServer, sourceDatabase, sourceSchema, sourceTable, schema, synonym);
+        return produceSqlStatement(createSynonymChange, database);
     }
 
-    private Sql produceSqlStatement(AddSynonymChange addSynonymChange, Database database) {
-        AddSynonymGenerator addSynonymGenerator = new AddSynonymGenerator();
-        SqlStatement[] statements = addSynonymChange.generateStatements(database);
-        Sql[] sql = addSynonymGenerator.generateSql((AddSynonymStatement) statements[0], database, null);
+    private Sql produceSqlStatement(CreateSynonymChange createSynonymChange, Database database) {
+        CreateSynonymGenerator createSynonymGenerator = new CreateSynonymGenerator();
+        SqlStatement[] statements = createSynonymChange.generateStatements(database);
+        Sql[] sql = createSynonymGenerator.generateSql((CreateSynonymStatement) statements[0], database, null);
         return sql[0];
     }
 
