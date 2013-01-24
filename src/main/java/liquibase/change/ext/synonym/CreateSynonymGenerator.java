@@ -1,4 +1,4 @@
-package liquibase.sqlgenerator.ext;
+package liquibase.change.ext.synonym;
 
 import liquibase.database.Database;
 import liquibase.exception.ValidationErrors;
@@ -6,14 +6,13 @@ import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.AbstractSqlGenerator;
-import liquibase.statement.ext.AddSynonymStatement;
 
 import static liquibase.util.StringUtils.trimToNull;
 
-public class AddSynonymGenerator extends AbstractSqlGenerator<AddSynonymStatement> {
+public class CreateSynonymGenerator extends AbstractSqlGenerator<CreateSynonymStatement> {
 
     @Override
-    public ValidationErrors validate(AddSynonymStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+    public ValidationErrors validate(CreateSynonymStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         ValidationErrors validationErrors = new ValidationErrors();
         validationErrors.checkRequiredField("sourceTableName", statement.getSourceTableName());
         validationErrors.checkRequiredField("synonymName", statement.getSynonymName());
@@ -21,7 +20,7 @@ public class AddSynonymGenerator extends AbstractSqlGenerator<AddSynonymStatemen
     }
 
     @Override
-    public Sql[] generateSql(AddSynonymStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+    public Sql[] generateSql(CreateSynonymStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         StringBuilder builder = new StringBuilder();
         builder.append("CREATE SYNONYM ");
         if (trimToNull(statement.getSchemaName()) != null) {

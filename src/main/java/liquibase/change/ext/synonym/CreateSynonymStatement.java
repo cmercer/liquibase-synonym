@@ -1,8 +1,8 @@
-package liquibase.statement.ext;
+package liquibase.change.ext.synonym;
 
 import liquibase.statement.AbstractSqlStatement;
 
-public class AddSynonymStatement extends AbstractSqlStatement {
+public class CreateSynonymStatement extends AbstractSqlStatement {
 
     private String sourceServerName;
     private String sourceDatabaseName;
@@ -11,16 +11,15 @@ public class AddSynonymStatement extends AbstractSqlStatement {
     private String schemaName;
     private String synonymName;
 
-    public AddSynonymStatement(String sourceServerName, String sourceDatabaseName, String sourceSchemaName, String sourceTableName, String schemaName, String synonymName) {
+    public CreateSynonymStatement(
+            String sourceServerName,
+            String sourceDatabaseName,
+            String sourceSchemaName,
+            String sourceTableName,
+            String schemaName,
+            String synonymName) {
         this.sourceServerName = sourceServerName;
         this.sourceDatabaseName = sourceDatabaseName;
-        this.sourceSchemaName = sourceSchemaName;
-        this.sourceTableName = sourceTableName;
-        this.schemaName = schemaName;
-        this.synonymName = synonymName;
-    }
-
-    public AddSynonymStatement(String sourceSchemaName, String sourceTableName, String schemaName, String synonymName) {
         this.sourceSchemaName = sourceSchemaName;
         this.sourceTableName = sourceTableName;
         this.schemaName = schemaName;
