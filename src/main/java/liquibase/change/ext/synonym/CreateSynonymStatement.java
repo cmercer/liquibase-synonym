@@ -10,8 +10,9 @@ public class CreateSynonymStatement extends AbstractSqlStatement {
     private String sourceTableName;
     private String schemaName;
     private String synonymName;
+    private boolean publicSynonym;
 
-    public CreateSynonymStatement(
+	public CreateSynonymStatement(
             String sourceServerName,
             String sourceDatabaseName,
             String sourceSchemaName,
@@ -24,7 +25,21 @@ public class CreateSynonymStatement extends AbstractSqlStatement {
         this.sourceTableName = sourceTableName;
         this.schemaName = schemaName;
         this.synonymName = synonymName;
+        this.publicSynonym = false;
     }
+
+	public CreateSynonymStatement(
+            String sourceServerName,
+            String sourceDatabaseName,
+            String sourceSchemaName,
+            String sourceTableName,
+            String schemaName,
+            String synonymName,
+            boolean publicSynonym) {
+		this(sourceServerName,sourceDatabaseName,sourceSchemaName,
+				sourceTableName, schemaName, synonymName);
+		this.publicSynonym = publicSynonym;
+	}
 
 
     public String getSourceServerName() {
@@ -51,4 +66,11 @@ public class CreateSynonymStatement extends AbstractSqlStatement {
         return synonymName;
     }
 
+    public boolean isPublicSynonym() {
+		return publicSynonym;
+	}
+
+	public void setPublicSynonym(boolean publicSynonym) {
+		this.publicSynonym = publicSynonym;
+	}
 }
