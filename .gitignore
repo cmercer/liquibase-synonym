@@ -18,3 +18,5 @@ out
 
 #local gradle properties file
 gradle.properties
+/.settings
+/bin
