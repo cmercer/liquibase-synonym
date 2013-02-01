@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<xsd:schema xmlns="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+            elementFormDefault="qualified">
+
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+
+    <xsd:annotation>
+        <xsd:documentation><![CDATA[
+	    Liquibase Extention to handle the generation of synonyms.
+		]]></xsd:documentation>
+    </xsd:annotation>
+
+
+    <xsd:element name="createSynonym">
+        <xsd:complexType>
+            <xsd:attribute name="replace" type="xsd:boolean" default="false">
+                <!--
+                    Whether or not to replace an existing synonym if it exists.
+
+                    Some database software allows you to create synonym with a syntax of
+                        create or replace synonym ...
+                    Other databased for you drop the synonym if you want to replace it
+                        drop synonym;
+                        create synonym ...
+                    Depending on the database the correct form will be generated.
+                    However, some databased might fail if the synonym does not exist
+                    and you attempt to drop it.
+                -->
+            </xsd:attribute>
+            <xsd:attribute name="public" type="xsd:boolean" default="false">
+                <!--
+                    Whether or the the synonym is public.  Some databases allow a synonym
+                    to be public, which allows anyone to be able to use it.
+                -->
+            </xsd:attribute>
+            <xsd:attribute name="synonymName" type="xsd:string" use="required">
+                <!--
+                    The simple name of the synonym.  No schema or other anything else just
+                    the name of the synonym.
+                -->
+            </xsd:attribute>
+            <xsd:attribute name="sourceObjectName" type="xsd:string" use="required">
+                <!--
+                    The source object, usually a table but some databases allow other object
+                    types, that is the source object for the synonym IE what the synonym points to.
+                -->
+            </xsd:attribute>
+            <xsd:attribute name="schemaName" type="xsd:string" use="optional">
+                <!--
+                    The schema to generate the synonym for
+                -->
+            </xsd:attribute>
+            <xsd:attribute name="sourceServerName" type="xsd:string" use="optional">
+                <!--
+                    Some database software allow you to be able to objects on other servers from a synonym.
+                -->
+            </xsd:attribute>
+            <xsd:attribute name="sourceDatabaseName" type="xsd:string" use="optional">
+                <!--
+                    Some database software allow you to be able to objects on other databases from a synonym.
+                -->
+            </xsd:attribute>
+            <xsd:attribute name="sourceSchemaName" type="xsd:string" use="optional">
+                <!--
+                    Some source schema name for the synonym
+                -->
+            </xsd:attribute>
+
+        </xsd:complexType>
+    </xsd:element>
+
+
+
+</xsd:schema>
