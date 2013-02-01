@@ -37,7 +37,7 @@ public class CreateSynonymChange extends AbstractChange {
 
 
     public CreateSynonymChange() {
-        super("addSynonym", "Add Synonym", ChangeMetaData.PRIORITY_DEFAULT);
+        super("createSynonym", "Create Synonym", ChangeMetaData.PRIORITY_DEFAULT);
     }
 
     public CreateSynonymChange(
@@ -168,6 +168,27 @@ public class CreateSynonymChange extends AbstractChange {
         return schemaName;
     }
 
+    public void setSourceServerName(String sourceServerName) {
+        this.sourceServerName = sourceServerName;
+    }
 
+    public void setSourceDatabaseName(String sourceDatabaseName) {
+        this.sourceDatabaseName = sourceDatabaseName;
+    }
 
+    public void setSourceObjectName(String sourceObjectName) {
+        this.sourceObjectName = sourceObjectName;
+    }
+
+    public void setSourceSchemaName(String sourceSchemaName) {
+        this.sourceSchemaName = sourceSchemaName;
+    }
+
+    public void setSynonymName(String synonymName) {
+        this.synonymName = synonymName;
+    }
+
+    public void setSchemaName(String schemaName) {
+        this.schemaName = schemaName;
+    }
 }
