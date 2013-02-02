@@ -34,7 +34,9 @@ public class CreateSynonymChange extends AbstractChange {
 
     private String schemaName;
 
+    private boolean publicSynonym = false;
 
+    private boolean replaceSynonym = false;
 
     public CreateSynonymChange() {
         super("createSynonym", "Create Synonym", ChangeMetaData.PRIORITY_DEFAULT);
@@ -47,11 +49,13 @@ public class CreateSynonymChange extends AbstractChange {
             String synonymName
     ) throws IllegalArgumentException {
 
-        super("addSynonym", "Add Synonym", 5);
+        super("createSynonym", "Create Synonym", ChangeMetaData.PRIORITY_DEFAULT);
         this.sourceSchemaName = sourceSchemaName;
         this.sourceObjectName = sourceObjectName;
         this.schemaName = schemaName;
         this.synonymName = synonymName;
+        this.publicSynonym = false;
+        this.replaceSynonym = false;
     }
 
     public CreateSynonymChange(
@@ -62,7 +66,7 @@ public class CreateSynonymChange extends AbstractChange {
             String schemaName,
             String synonymName
     ) {
-        super("addSynonym", "Add Synonym", ChangeMetaData.PRIORITY_DEFAULT);
+        super("createSynonym", "Create Synonym", ChangeMetaData.PRIORITY_DEFAULT);
         this.sourceServerName = sourceServerName;
         this.sourceDatabaseName = sourceDatabaseName;
         this.sourceSchemaName = sourceSchemaName;
@@ -97,8 +101,10 @@ public class CreateSynonymChange extends AbstractChange {
 
         }
 
-        return format("Created synonym '%1$S' for table '%2$S'", synonym, sourceTable);
+        return format("Created synonym '%1$S' for object '%2$S'", synonym, sourceTable);
     }
+
+
 
     @Override
     public SqlStatement[] generateStatements(Database database) {
@@ -190,5 +196,21 @@ public class CreateSynonymChange extends AbstractChange {
 
     public void setSchemaName(String schemaName) {
         this.schemaName = schemaName;
+    }
+
+    public boolean isPublicSynonym() {
+        return publicSynonym;
+    }
+
+    public void setPublicSynonym(boolean publicSynonym) {
+        this.publicSynonym = publicSynonym;
+    }
+
+    public boolean isReplaceSynonym() {
+        return replaceSynonym;
+    }
+
+    public void setReplaceSynonym(boolean replaceSynonym) {
+        this.replaceSynonym = replaceSynonym;
     }
 }

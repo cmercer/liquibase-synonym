@@ -15,6 +15,9 @@ import liquibase.sqlgenerator.core.AbstractSqlGenerator;
 
 import static liquibase.util.StringUtils.trimToNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CreateSynonymGenerator extends AbstractSqlGenerator<CreateSynonymStatement> {
 
     @Override
@@ -27,8 +30,16 @@ public class CreateSynonymGenerator extends AbstractSqlGenerator<CreateSynonymSt
 
     @Override
     public Sql[] generateSql(CreateSynonymStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        List<Sql> results = new ArrayList<Sql>();
         StringBuilder builder = new StringBuilder();
+        if(statement.isReplaceSynonym() && !supportsReplace(database)) {
+
+        }
+
         builder.append("CREATE ");
+        if(statement.isReplaceSynonym() && supportsReplace(database)) {
+            builder.append(" OR REPLACE");
+        }
         if(statement.isPublicSynonym() && supportsPublic(database)){
         	builder.append("PUBLIC ");
         }
@@ -49,23 +60,21 @@ public class CreateSynonymGenerator extends AbstractSqlGenerator<CreateSynonymSt
         }
         builder.append(statement.getSourceTableName());
         builder.append(";");
-        return new Sql[] {
-            new UnparsedSql(builder.toString())
-        };
+
+        results.add(new UnparsedSql(builder.toString()));
+        return results.toArray(new Sql[results.size()]);
     }
-    
+
     /**
      * return true if the database supports public synonyms
      */
     protected boolean supportsPublic(Database database) {
-        if(database instanceof OracleDatabase) {
-            return true;
-        } else if(database instanceof InformixDatabase) {
-            return true;
-        } else if(database instanceof  MaxDBDatabase) {
-            return true;
-        }else{
-        	return false;
-        }
+        return database instanceof OracleDatabase
+                || database instanceof InformixDatabase
+                || database instanceof MaxDBDatabase;
+    }
+
+    protected boolean supportsReplace(Database database) {
+        return database instanceof OracleDatabase;
     }
 }
