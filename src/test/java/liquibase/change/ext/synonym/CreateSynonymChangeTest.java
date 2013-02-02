@@ -23,7 +23,7 @@ public class CreateSynonymChangeTest {
     private static final String BLANK = "";
 
     private static final String CONFIRMATION_MESSAGE_START = "Created synonym '";
-    private static final String CONFIRMATION_MESSAGE_MIDDLE = "' for table '";
+    private static final String CONFIRMATION_MESSAGE_MIDDLE = "' for object '";
     private static final String CONFIRMATION_MESSAGE_END = "'";
 
     private static final String CONFIRMATION_MESSAGE_ALL_COMPONENTS = CONFIRMATION_MESSAGE_START + FULL_SYNONYM + CONFIRMATION_MESSAGE_MIDDLE + FULL_SOURCE_TABLE + CONFIRMATION_MESSAGE_END;

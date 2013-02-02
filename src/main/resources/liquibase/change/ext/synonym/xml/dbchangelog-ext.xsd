@@ -16,13 +16,13 @@
 
     <xsd:element name="createSynonym">
         <xsd:complexType>
-            <xsd:attribute name="replace" type="xsd:boolean" default="false">
+            <xsd:attribute name="replaceSynonym" type="xsd:boolean" default="false">
                 <!--
-                    Whether or not to replace an existing synonym if it exists.
+                    Whether or not to replaceSynonym an existing synonym if it exists.
 
                     Some database software allows you to create synonym with a syntax of
-                        create or replace synonym ...
-                    Other databased for you drop the synonym if you want to replace it
+                        create or replaceSynonym synonym ...
+                    Other databased for you drop the synonym if you want to replaceSynonym it
                         drop synonym;
                         create synonym ...
                     Depending on the database the correct form will be generated.
@@ -30,7 +30,7 @@
                     and you attempt to drop it.
                 -->
             </xsd:attribute>
-            <xsd:attribute name="public" type="xsd:boolean" default="false">
+            <xsd:attribute name="publicSynonym" type="xsd:boolean" default="false">
                 <!--
                     Whether or the the synonym is public.  Some databases allow a synonym
                     to be public, which allows anyone to be able to use it.
