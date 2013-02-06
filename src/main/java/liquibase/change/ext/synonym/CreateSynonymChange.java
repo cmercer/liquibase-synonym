@@ -108,6 +108,8 @@ public class CreateSynonymChange extends AbstractChange {
 
     @Override
     public SqlStatement[] generateStatements(Database database) {
+        String schemaName = getSchemaName() == null ? (database == null ? null: database.getDefaultSchemaName()) : getSchemaName();
+
         SqlStatement[] sqlStatements;
             sqlStatements = new SqlStatement[] {
                 new CreateSynonymStatement(sourceServerName, sourceDatabaseName, sourceSchemaName, sourceObjectName, schemaName, synonymName)

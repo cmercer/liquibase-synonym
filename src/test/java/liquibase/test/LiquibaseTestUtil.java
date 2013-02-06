@@ -1,5 +1,7 @@
 package liquibase.test;
 
+import static liquibase.util.StringUtils.trimToNull;
+
 import java.io.StringWriter;
 import java.sql.Connection;
 
@@ -16,9 +18,16 @@ public class LiquibaseTestUtil {
 
 
     public static String updateChangeLog(Connection connection, String changeLog) throws Exception{
+        return updateChangeLog(connection, changeLog, null);
+    }
+
+    public static String updateChangeLog(Connection connection, String changeLog, String defaultSchemaName) throws Exception{
         JdbcConnection jdbcConnection =  new JdbcConnection(connection);
         DatabaseFactory factory =  DatabaseFactory.getInstance();
         Database database = factory.findCorrectDatabaseImplementation(jdbcConnection);
+        if(trimToNull(defaultSchemaName) != null) {
+            database.setDefaultSchemaName(defaultSchemaName);
+        }
         Liquibase liquibase = new Liquibase(
                 changeLog,
                 new ClassLoaderResourceAccessor(LiquibaseTestUtil.class.getClassLoader()),

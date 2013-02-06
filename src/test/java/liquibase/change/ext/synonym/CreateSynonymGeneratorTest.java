@@ -3,6 +3,7 @@ package liquibase.change.ext.synonym;
 import liquibase.database.Database;
 import liquibase.database.core.MSSQLDatabase;
 import liquibase.database.core.OracleDatabase;
+import liquibase.exception.DatabaseException;
 import liquibase.sql.Sql;
 import liquibase.statement.SqlStatement;
 import org.junit.Test;
@@ -38,10 +39,15 @@ public class CreateSynonymGeneratorTest {
     }
 
     @Test
-    public void testGenerateSql() {
+    public void testGenerateSql() throws DatabaseException {
         OracleDatabase oracleDatabase = new OracleDatabase();
         Sql sql = produceSqlStatement(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM, oracleDatabase);
         assertEquals("SQL statement should properly reflect fully-qualified arguments", SQL_ALL_COMPONENTS, sql.toSql());
+
+        oracleDatabase.setDefaultSchemaName(SCHEMA);
+        sql = produceSqlStatement(SOURCE_SCHEMA, SOURCE_TABLE, null, SYNONYM, oracleDatabase);
+        assertEquals("SQL statement should properly reflect fully-qualified arguments", SQL_ALL_COMPONENTS, sql.toSql());
+        oracleDatabase.setDefaultSchemaName(null);
 
         sql = produceSqlStatement(null, SOURCE_TABLE, SCHEMA, SYNONYM, oracleDatabase);
         assertEquals("SQL statement should properly reflect fully-qualified synonym", SQL_FULL_SYNONYM, sql.toSql());
@@ -58,6 +64,8 @@ public class CreateSynonymGeneratorTest {
 
         sql = produceSqlStatement(null, SOURCE_DATABASE, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM, mssqlDatabase);
         assertEquals("SQL statement should properly reflect partially-qualified SQL Server source", SQL_SQLSERVER_PARTIAL_COMPONENTS, sql.toSql());
+
+
     }
 
     private Sql produceSqlStatement(String sourceSchema, String sourceTable, String schema, String synonym, Database database) {
