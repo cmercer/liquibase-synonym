@@ -15,7 +15,7 @@ import org.junit.Test;
  * synonyms, should be in an oracle specific subclass.
  *
  */
-public abstract class AbstractTestCase {
+public abstract class AbstractXmlTestCase {
 
     @Test
     public void testSimpleSynonym() throws Throwable {

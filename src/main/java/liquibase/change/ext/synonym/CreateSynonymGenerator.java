@@ -1,10 +1,7 @@
 package liquibase.change.ext.synonym;
 
 import liquibase.database.Database;
-import liquibase.database.core.DB2Database;
-import liquibase.database.core.DerbyDatabase;
 import liquibase.database.core.InformixDatabase;
-import liquibase.database.core.MSSQLDatabase;
 import liquibase.database.core.MaxDBDatabase;
 import liquibase.database.core.OracleDatabase;
 import liquibase.exception.ValidationErrors;
@@ -32,12 +29,12 @@ public class CreateSynonymGenerator extends AbstractSqlGenerator<CreateSynonymSt
     public Sql[] generateSql(CreateSynonymStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         List<Sql> results = new ArrayList<Sql>();
         StringBuilder builder = new StringBuilder();
-        if(statement.isReplaceSynonym() && !supportsReplace(database)) {
+        if(statement.isReplaceIfExists() && !supportsReplace(database)) {
 
         }
 
         builder.append("CREATE ");
-        if(statement.isReplaceSynonym() && supportsReplace(database)) {
+        if(statement.isReplaceIfExists() && supportsReplace(database)) {
             builder.append(" OR REPLACE");
         }
         if(statement.isPublicSynonym() && supportsPublic(database)){

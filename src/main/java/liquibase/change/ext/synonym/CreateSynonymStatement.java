@@ -11,7 +11,7 @@ public class CreateSynonymStatement extends AbstractSqlStatement {
     private String schemaName;
     private String synonymName;
     private boolean publicSynonym;
-    private boolean replaceSynonym;
+    private boolean replaceIfExists;
 
 	public CreateSynonymStatement(
             String sourceServerName,
@@ -75,11 +75,11 @@ public class CreateSynonymStatement extends AbstractSqlStatement {
 		this.publicSynonym = publicSynonym;
 	}
 
-    public boolean isReplaceSynonym() {
-        return replaceSynonym;
+    public boolean isReplaceIfExists() {
+        return replaceIfExists;
     }
 
-    public void setReplaceSynonym(boolean replaceSynonym) {
-        this.replaceSynonym = replaceSynonym;
+    public void setReplaceIfExists(boolean replaceIfExists) {
+        this.replaceIfExists = replaceIfExists;
     }
 }

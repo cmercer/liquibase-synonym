@@ -9,7 +9,7 @@ import org.junit.Rule;
 /**
  *
  */
-public class DerbyTestCase extends AbstractTestCase{
+public class DerbyXmlTestCase extends AbstractXmlTestCase {
 
     //used to make sure we don't create a derby.log file that we have to clean up later.
     static {

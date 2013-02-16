@@ -36,26 +36,14 @@ public class CreateSynonymChange extends AbstractChange {
 
     private boolean publicSynonym = false;
 
-    private boolean replaceSynonym = false;
+    private boolean replaceIfExists = false;
 
     public CreateSynonymChange() {
         super("createSynonym", "Create Synonym", ChangeMetaData.PRIORITY_DEFAULT);
     }
 
-    public CreateSynonymChange(
-            String sourceSchemaName,
-            String sourceObjectName,
-            String schemaName,
-            String synonymName
-    ) throws IllegalArgumentException {
-
-        super("createSynonym", "Create Synonym", ChangeMetaData.PRIORITY_DEFAULT);
-        this.sourceSchemaName = sourceSchemaName;
-        this.sourceObjectName = sourceObjectName;
-        this.schemaName = schemaName;
-        this.synonymName = synonymName;
-        this.publicSynonym = false;
-        this.replaceSynonym = false;
+    public CreateSynonymChange(String sourceSchemaName, String sourceObjectName, String schemaName, String synonymName) {
+        this(null, null, sourceSchemaName, sourceObjectName, schemaName, synonymName);
     }
 
     public CreateSynonymChange(
@@ -208,11 +196,11 @@ public class CreateSynonymChange extends AbstractChange {
         this.publicSynonym = publicSynonym;
     }
 
-    public boolean isReplaceSynonym() {
-        return replaceSynonym;
+    public boolean isReplaceIfExists() {
+        return replaceIfExists;
     }
 
-    public void setReplaceSynonym(boolean replaceSynonym) {
-        this.replaceSynonym = replaceSynonym;
+    public void setReplaceIfExists(boolean replaceIfExists) {
+        this.replaceIfExists = replaceIfExists;
     }
 }

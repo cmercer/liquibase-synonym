@@ -16,18 +16,14 @@
 
     <xsd:element name="createSynonym">
         <xsd:complexType>
-            <xsd:attribute name="replaceSynonym" type="xsd:boolean" default="false">
+            <xsd:attribute name="replaceIfExists" type="xsd:boolean" default="false">
                 <!--
-                    Whether or not to replaceSynonym an existing synonym if it exists.
+                    Whether or not to "create or replace" for an existing synonym.
 
-                    Some database software allows you to create synonym with a syntax of
-                        create or replaceSynonym synonym ...
-                    Other databased for you drop the synonym if you want to replaceSynonym it
-                        drop synonym;
-                        create synonym ...
-                    Depending on the database the correct form will be generated.
-                    However, some databased might fail if the synonym does not exist
-                    and you attempt to drop it.
+                    If your database does not support "or replace" then it will not attempt
+                    to generate it.  If you wish to do a similar action you call
+                    dropSynonym in liquibase before calling createSynonym with the
+                    the synonym
                 -->
             </xsd:attribute>
             <xsd:attribute name="publicSynonym" type="xsd:boolean" default="false">
