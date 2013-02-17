@@ -8,9 +8,9 @@ import liquibase.sql.Sql;
 import liquibase.statement.SqlStatement;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-public class CreateSynonymGeneratorTest {
+public class CreateSynonymGeneratorTestCase {
 
     private static final String SOURCE_SCHEMA = "SOURCE_SCHEMA";
     private static final String SOURCE_TABLE = "SOURCE_TABLE";
@@ -39,15 +39,20 @@ public class CreateSynonymGeneratorTest {
     }
 
     @Test
-    public void testGenerateSql() throws DatabaseException {
+    public void testGenerateMSSQL() throws DatabaseException {
+        MSSQLDatabase mssqlDatabase = new MSSQLDatabase();
+        Sql sql = produceSqlStatement(SOURCE_SERVER, SOURCE_DATABASE, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM, mssqlDatabase);
+        assertEquals("SQL statement should properly reflect fully-qualified SQL Server source", SQL_SQLSERVER_ALL_COMPONENTS, sql.toSql());
+
+        sql = produceSqlStatement(null, SOURCE_DATABASE, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM, mssqlDatabase);
+        assertEquals("SQL statement should properly reflect partially-qualified SQL Server source", SQL_SQLSERVER_PARTIAL_COMPONENTS, sql.toSql());
+    }
+
+    @Test
+    public void testGenerateSqlOracle() throws Exception {
         OracleDatabase oracleDatabase = new OracleDatabase();
         Sql sql = produceSqlStatement(SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM, oracleDatabase);
         assertEquals("SQL statement should properly reflect fully-qualified arguments", SQL_ALL_COMPONENTS, sql.toSql());
-
-        oracleDatabase.setDefaultSchemaName(SCHEMA);
-        sql = produceSqlStatement(SOURCE_SCHEMA, SOURCE_TABLE, null, SYNONYM, oracleDatabase);
-        assertEquals("SQL statement should properly reflect fully-qualified arguments", SQL_ALL_COMPONENTS, sql.toSql());
-        oracleDatabase.setDefaultSchemaName(null);
 
         sql = produceSqlStatement(null, SOURCE_TABLE, SCHEMA, SYNONYM, oracleDatabase);
         assertEquals("SQL statement should properly reflect fully-qualified synonym", SQL_FULL_SYNONYM, sql.toSql());
@@ -57,15 +62,15 @@ public class CreateSynonymGeneratorTest {
 
         sql = produceSqlStatement(null, SOURCE_TABLE, null, SYNONYM, oracleDatabase);
         assertEquals("SQL statement should properly reflect partially-qualified arguments", SQL_PARTIAL_COMPONENTS, sql.toSql());
+    }
 
-        MSSQLDatabase mssqlDatabase = new MSSQLDatabase();
-        sql = produceSqlStatement(SOURCE_SERVER, SOURCE_DATABASE, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM, mssqlDatabase);
-        assertEquals("SQL statement should properly reflect fully-qualified SQL Server source", SQL_SQLSERVER_ALL_COMPONENTS, sql.toSql());
-
-        sql = produceSqlStatement(null, SOURCE_DATABASE, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM, mssqlDatabase);
-        assertEquals("SQL statement should properly reflect partially-qualified SQL Server source", SQL_SQLSERVER_PARTIAL_COMPONENTS, sql.toSql());
-
-
+    @Test
+    public void testDefaultSchemaSupport() throws DatabaseException {
+        OracleDatabase oracleDatabase = new OracleDatabase();
+        oracleDatabase.setDefaultSchemaName(SCHEMA);
+        Sql sql = produceSqlStatement(SOURCE_SCHEMA, SOURCE_TABLE, null, SYNONYM, oracleDatabase);
+        assertEquals("SQL statement should properly reflect fully-qualified arguments", SQL_ALL_COMPONENTS, sql.toSql());
+        oracleDatabase.setDefaultSchemaName(null);
     }
 
     private Sql produceSqlStatement(String sourceSchema, String sourceTable, String schema, String synonym, Database database) {
@@ -74,7 +79,7 @@ public class CreateSynonymGeneratorTest {
     }
 
     private Sql produceSqlStatement(String sourceServer, String sourceDatabase, String sourceSchema, String sourceTable, String schema, String synonym, Database database) {
-        CreateSynonymChange createSynonymChange = new CreateSynonymChange(sourceServer, sourceDatabase, sourceSchema, sourceTable, schema, synonym);
+        CreateSynonymChange createSynonymChange = new CreateSynonymChange(sourceServer, sourceDatabase, sourceSchema, sourceTable, schema, synonym, false, false);
         return produceSqlStatement(createSynonymChange, database);
     }
 

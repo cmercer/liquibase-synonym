@@ -1,16 +1,11 @@
 package liquibase.change.ext.synonym;
 
 import static java.lang.String.format;
+import static liquibase.change.ext.synonym.Constants.SUPPORTS_SYNONYMS;
 
 import liquibase.change.AbstractChange;
 import liquibase.change.ChangeMetaData;
 import liquibase.database.Database;
-import liquibase.database.core.DB2Database;
-import liquibase.database.core.DerbyDatabase;
-import liquibase.database.core.InformixDatabase;
-import liquibase.database.core.MSSQLDatabase;
-import liquibase.database.core.MaxDBDatabase;
-import liquibase.database.core.OracleDatabase;
 import liquibase.exception.SetupException;
 import liquibase.statement.SqlStatement;
 
@@ -19,6 +14,7 @@ import static liquibase.util.StringUtils.trimToNull;
 /**
  * Adds a synonym to the database.
  * Checks to make sure that the database being used support synonyms.
+ * If the database does not support synonyms, it will not product any sql output.
  */
 public class CreateSynonymChange extends AbstractChange {
 
@@ -42,8 +38,12 @@ public class CreateSynonymChange extends AbstractChange {
         super("createSynonym", "Create Synonym", ChangeMetaData.PRIORITY_DEFAULT);
     }
 
-    public CreateSynonymChange(String sourceSchemaName, String sourceObjectName, String schemaName, String synonymName) {
-        this(null, null, sourceSchemaName, sourceObjectName, schemaName, synonymName);
+    public CreateSynonymChange(
+            String sourceSchemaName,
+            String sourceObjectName,
+            String schemaName,
+            String synonymName) {
+        this(null, null, sourceSchemaName, sourceObjectName, schemaName, synonymName, false, false);
     }
 
     public CreateSynonymChange(
@@ -52,15 +52,19 @@ public class CreateSynonymChange extends AbstractChange {
             String sourceSchemaName,
             String sourceObjectName,
             String schemaName,
-            String synonymName
-    ) {
+            String synonymName,
+            boolean publicSynonym,
+            boolean replaceIfExists) {
+
         super("createSynonym", "Create Synonym", ChangeMetaData.PRIORITY_DEFAULT);
-        this.sourceServerName = sourceServerName;
-        this.sourceDatabaseName = sourceDatabaseName;
-        this.sourceSchemaName = sourceSchemaName;
-        this.sourceObjectName = sourceObjectName;
-        this.schemaName = schemaName;
-        this.synonymName = synonymName;
+        setSourceServerName(sourceServerName);
+        setSourceDatabaseName(sourceDatabaseName);
+        setSourceSchemaName(sourceSchemaName);
+        setSourceObjectName(sourceObjectName);
+        setSchemaName(schemaName);
+        setSynonymName(synonymName);
+        setPublicSynonym(publicSynonym);
+        setReplaceIfExists(replaceIfExists);
     }
 
     @Override
@@ -86,21 +90,31 @@ public class CreateSynonymChange extends AbstractChange {
             } else {
                 sourceTable = sourceDatabase + "." + sourceTable;
             }
-
         }
 
         return format("Created synonym '%1$S' for object '%2$S'", synonym, sourceTable);
     }
 
-
-
     @Override
     public SqlStatement[] generateStatements(Database database) {
-        String schemaName = getSchemaName() == null ? (database == null ? null: database.getDefaultSchemaName()) : getSchemaName();
+        String schemaName = getSchemaName();
+
+        if(schemaName == null && database != null) {
+            schemaName = database.getDefaultSchemaName();
+        }
 
         SqlStatement[] sqlStatements;
             sqlStatements = new SqlStatement[] {
-                new CreateSynonymStatement(sourceServerName, sourceDatabaseName, sourceSchemaName, sourceObjectName, schemaName, synonymName)
+                new CreateSynonymStatement(
+                        getSourceServerName(),
+                        getSourceDatabaseName(),
+                        getSourceSchemaName(),
+                        getSourceObjectName(),
+                        schemaName,
+                        getSynonymName(),
+                        isPublicSynonym(),
+                        isReplaceIfExists()
+                )
             };
 
         return sqlStatements;
@@ -111,7 +125,7 @@ public class CreateSynonymChange extends AbstractChange {
             throw new AssertionError("Synonym name cannot be null");
         }
         if (trimToNull(sourceObjectName) == null) {
-            throw new AssertionError("Source table name cannot be null");
+            throw new AssertionError("Source Object name cannot be null");
         }
         if (trimToNull(sourceServerName) != null && trimToNull(sourceDatabaseName) == null) {
             throw new AssertionError("If a source server is provided, a source database must also be provided");
@@ -128,60 +142,51 @@ public class CreateSynonymChange extends AbstractChange {
     }
 
     protected boolean supportsDatabase(Database database) {
-
-        boolean supported = false;
-
-        if(database instanceof OracleDatabase) {
-            supported = true;
-        } else if(database instanceof MSSQLDatabase) {
-            supported = true;
-        } else if(database instanceof DB2Database) {
-            supported = true;
-        } else if(database instanceof DerbyDatabase) {
-            supported = true;
-        } else if(database instanceof InformixDatabase) {
-            supported = true;
-        } else if(database instanceof  MaxDBDatabase) {
-            supported = true;
-        }
-
-        return supported;
+       return SUPPORTS_SYNONYMS.contains(database.getClass());
     }
 
-    public String getSourceObjectName() {
-        return sourceObjectName;
-    }
-
-    public String getSourceSchemaName() {
-        return sourceSchemaName;
-    }
-
-    public String getSynonymName() {
-        return synonymName;
-    }
-
-    public String getSchemaName() {
-        return schemaName;
+    public String getSourceServerName() {
+        return sourceServerName;
     }
 
     public void setSourceServerName(String sourceServerName) {
         this.sourceServerName = sourceServerName;
     }
 
+    public String getSourceDatabaseName() {
+        return sourceDatabaseName;
+    }
+
     public void setSourceDatabaseName(String sourceDatabaseName) {
         this.sourceDatabaseName = sourceDatabaseName;
+    }
+
+    public String getSourceObjectName() {
+        return sourceObjectName;
     }
 
     public void setSourceObjectName(String sourceObjectName) {
         this.sourceObjectName = sourceObjectName;
     }
 
+    public String getSourceSchemaName() {
+        return sourceSchemaName;
+    }
+
     public void setSourceSchemaName(String sourceSchemaName) {
         this.sourceSchemaName = sourceSchemaName;
     }
 
+    public String getSynonymName() {
+        return synonymName;
+    }
+
     public void setSynonymName(String synonymName) {
         this.synonymName = synonymName;
+    }
+
+    public String getSchemaName() {
+        return schemaName;
     }
 
     public void setSchemaName(String schemaName) {

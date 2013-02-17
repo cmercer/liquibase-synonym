@@ -1,9 +1,9 @@
 package liquibase.change.ext.synonym;
 
+import static liquibase.change.ext.synonym.Constants.SUPPORTS_PUBLIC;
+import static liquibase.change.ext.synonym.Constants.SUPPORTS_REPLACE;
+
 import liquibase.database.Database;
-import liquibase.database.core.InformixDatabase;
-import liquibase.database.core.MaxDBDatabase;
-import liquibase.database.core.OracleDatabase;
 import liquibase.exception.ValidationErrors;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
@@ -18,7 +18,11 @@ import java.util.List;
 public class CreateSynonymGenerator extends AbstractSqlGenerator<CreateSynonymStatement> {
 
     @Override
-    public ValidationErrors validate(CreateSynonymStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+    public ValidationErrors validate(
+            CreateSynonymStatement statement,
+            Database database,
+            SqlGeneratorChain sqlGeneratorChain) {
+
         ValidationErrors validationErrors = new ValidationErrors();
         validationErrors.checkRequiredField("sourceTableName", statement.getSourceTableName());
         validationErrors.checkRequiredField("synonymName", statement.getSynonymName());
@@ -26,16 +30,17 @@ public class CreateSynonymGenerator extends AbstractSqlGenerator<CreateSynonymSt
     }
 
     @Override
-    public Sql[] generateSql(CreateSynonymStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+    public Sql[] generateSql(
+            CreateSynonymStatement statement,
+            Database database,
+            SqlGeneratorChain sqlGeneratorChain) {
+
         List<Sql> results = new ArrayList<Sql>();
         StringBuilder builder = new StringBuilder();
-        if(statement.isReplaceIfExists() && !supportsReplace(database)) {
-
-        }
 
         builder.append("CREATE ");
         if(statement.isReplaceIfExists() && supportsReplace(database)) {
-            builder.append(" OR REPLACE");
+            builder.append("OR REPLACE ");
         }
         if(statement.isPublicSynonym() && supportsPublic(database)){
         	builder.append("PUBLIC ");
@@ -66,12 +71,10 @@ public class CreateSynonymGenerator extends AbstractSqlGenerator<CreateSynonymSt
      * return true if the database supports public synonyms
      */
     protected boolean supportsPublic(Database database) {
-        return database instanceof OracleDatabase
-                || database instanceof InformixDatabase
-                || database instanceof MaxDBDatabase;
+        return SUPPORTS_PUBLIC.contains(database.getClass());
     }
 
     protected boolean supportsReplace(Database database) {
-        return database instanceof OracleDatabase;
+        return SUPPORTS_REPLACE.contains(database.getClass());
     }
 }

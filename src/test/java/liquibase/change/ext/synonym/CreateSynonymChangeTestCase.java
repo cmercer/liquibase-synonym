@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class CreateSynonymChangeTest {
+public class CreateSynonymChangeTestCase {
 
     private static final String SOURCE_SCHEMA = "SOURCE_SCHEMA";
     private static final String SOURCE_TABLE = "SOURCE_TABLE";
@@ -62,7 +62,7 @@ public class CreateSynonymChangeTest {
 
     @Test(expected = SetupException.class)
     public void testGetConfirmationMessageWithIncorrectSqlServerParams() throws SetupException {
-        CreateSynonymChange createSynonymChange = new CreateSynonymChange(SOURCE_SERVER, BLANK, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
+        CreateSynonymChange createSynonymChange = new CreateSynonymChange(SOURCE_SERVER, BLANK, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM, false, false);
         createSynonymChange.init();
         createSynonymChange.getConfirmationMessage();
     }
@@ -84,11 +84,11 @@ public class CreateSynonymChangeTest {
         confirmationMessage = createSynonymChange.getConfirmationMessage();
         assertEquals("Confirmation message should properly reflect fully-qualified source table", CONFIRMATION_MESSAGE_FULL_SOURCE_TABLE, confirmationMessage);
 
-        createSynonymChange = new CreateSynonymChange(BLANK, SOURCE_DATABASE, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
+        createSynonymChange = new CreateSynonymChange(BLANK, SOURCE_DATABASE, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM, false, false);
         confirmationMessage = createSynonymChange.getConfirmationMessage();
         assertEquals("Confirmation message should properly reflect partially-qualified SQL Server source table", CONFIRMATION_MESSAGE_SQLSERVER_PARTIAL_SOURCE_TABLE, confirmationMessage);
 
-        createSynonymChange = new CreateSynonymChange(SOURCE_SERVER, SOURCE_DATABASE, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM);
+        createSynonymChange = new CreateSynonymChange(SOURCE_SERVER, SOURCE_DATABASE, SOURCE_SCHEMA, SOURCE_TABLE, SCHEMA, SYNONYM, false, false);
         confirmationMessage = createSynonymChange.getConfirmationMessage();
         assertEquals("Confirmation message should properly reflect fully-qualified SQL Server source table", CONFIRMATION_MESSAGE_SQLSERVER_FULL_SOURCE_TABLE, confirmationMessage);
     }

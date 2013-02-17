@@ -19,27 +19,17 @@ public class CreateSynonymStatement extends AbstractSqlStatement {
             String sourceSchemaName,
             String sourceTableName,
             String schemaName,
-            String synonymName) {
+            String synonymName,
+            boolean publicSynonym,
+            boolean replaceIfExists) {
         this.sourceServerName = sourceServerName;
         this.sourceDatabaseName = sourceDatabaseName;
         this.sourceSchemaName = sourceSchemaName;
         this.sourceTableName = sourceTableName;
         this.schemaName = schemaName;
         this.synonymName = synonymName;
-        this.publicSynonym = false;
-    }
-
-	public CreateSynonymStatement(
-            String sourceServerName,
-            String sourceDatabaseName,
-            String sourceSchemaName,
-            String sourceTableName,
-            String schemaName,
-            String synonymName,
-            boolean publicSynonym) {
-		this(sourceServerName,sourceDatabaseName,sourceSchemaName,
-				sourceTableName, schemaName, synonymName);
 		this.publicSynonym = publicSynonym;
+        this.replaceIfExists = replaceIfExists;
 	}
 
 
@@ -71,15 +61,7 @@ public class CreateSynonymStatement extends AbstractSqlStatement {
 		return publicSynonym;
 	}
 
-	public void setPublicSynonym(boolean publicSynonym) {
-		this.publicSynonym = publicSynonym;
-	}
-
     public boolean isReplaceIfExists() {
         return replaceIfExists;
-    }
-
-    public void setReplaceIfExists(boolean replaceIfExists) {
-        this.replaceIfExists = replaceIfExists;
     }
 }
