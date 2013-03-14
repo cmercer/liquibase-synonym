@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext-syn="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                              http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+                              http://www.liquibase.org/xml/ns/dbchangelog-ext
+                              http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="1" author="cmercer@github.com">
+        <createTable tableName="source-table">
+            <column name="id" type="java.sql.Types.INTEGER">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+        <ext-syn:createSynonym synonymName="test-synonym" sourceObjectName="source-table" publicSynonym="true"/>
+    </changeSet>
+
+
+</databaseChangeLog>

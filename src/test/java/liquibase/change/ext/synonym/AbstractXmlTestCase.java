@@ -18,12 +18,46 @@ import org.junit.Test;
 public abstract class AbstractXmlTestCase {
 
     @Test
-    public void testSimpleSynonym() throws Throwable {
+    public void testSimpleCreateSynonym() throws Throwable {
         Connection connection = getConnection();
-        String result = updateChangeLog(connection, "simple.xml");
+        String result = updateChangeLog(connection, "simple-create.xml");
+        result = result.toLowerCase();
         assertNotNull(result);
         assertTrue(result.length() > 0);
-        assertTrue(result.toLowerCase().contains("synonym"));
+        assertTrue(result.contains("synonym"));
+        assertTrue(result.contains("create"));
+        assertTrue(result.indexOf("create") < result.indexOf("synonym"));
+        assertTrue(result.contains("test-synonym"));
+    }
+
+    @Test
+    public void testSimpleDropSynonym() throws Throwable{
+        Connection connection = getConnection();
+        String result = updateChangeLog(connection, "simple-drop.xml");
+        result = result.toLowerCase();
+        assertNotNull(result);
+        assertTrue(result.length() > 0);
+        assertTrue(result.contains("synonym"));
+        assertTrue(result.contains("drop"));
+        assertTrue(result.indexOf("drop") < result.indexOf("synonym"));
+        assertTrue(result.contains("test-synonym"));
+    }
+
+    @Test
+    public void testDropWithPublicSynonym() throws Throwable{
+        Connection connection = getConnection();
+        String result = updateChangeLog(connection, "drop-with-public.xml");
+        result = result.toLowerCase();
+        assertNotNull(result);
+        assertTrue(result.length() > 0);
+        assertTrue(result.contains("synonym"));
+        assertTrue(result.contains("drop"));
+        assertTrue(result.indexOf("drop") < result.indexOf("synonym"));
+        assertTrue(result.contains("test-synonym"));
+        assertTrue(result.contains("test-schema"));
+        assertTrue(result.contains("public"));
+        assertTrue(result.indexOf("drop") < result.indexOf("public"));
+        assertTrue(result.indexOf("public") < result.indexOf("synonym"));
     }
 
 

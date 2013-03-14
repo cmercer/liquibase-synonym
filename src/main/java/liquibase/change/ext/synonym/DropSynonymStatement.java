@@ -9,20 +9,25 @@ public class DropSynonymStatement extends AbstractSqlStatement {
 
     private String schemaName;
     private String synonymName;
+    private boolean publicSynonym;
+
+    public DropSynonymStatement(String schemaName, String synonymName, boolean publicSynonym) {
+        this.schemaName = schemaName;
+        this.synonymName = synonymName;
+        this.publicSynonym = publicSynonym;
+    }
 
     public String getSchemaName() {
         return schemaName;
-    }
-
-    public void setSchemaName(String schemaName) {
-        this.schemaName = schemaName;
     }
 
     public String getSynonymName() {
         return synonymName;
     }
 
-    public void setSynonymName(String synonymName) {
-        this.synonymName = synonymName;
+    public boolean isPublicSynonym() {
+        return publicSynonym;
     }
+
+
 }

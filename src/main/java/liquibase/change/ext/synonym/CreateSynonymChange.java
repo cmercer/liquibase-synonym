@@ -2,14 +2,13 @@ package liquibase.change.ext.synonym;
 
 import static java.lang.String.format;
 import static liquibase.change.ext.synonym.Constants.SUPPORTS_SYNONYMS;
+import static liquibase.util.StringUtils.trimToNull;
 
 import liquibase.change.AbstractChange;
 import liquibase.change.ChangeMetaData;
 import liquibase.database.Database;
 import liquibase.exception.SetupException;
 import liquibase.statement.SqlStatement;
-
-import static liquibase.util.StringUtils.trimToNull;
 
 /**
  * Adds a synonym to the database.
@@ -92,7 +91,7 @@ public class CreateSynonymChange extends AbstractChange {
             }
         }
 
-        return format("Created synonym '%1$S' for object '%2$S'", synonym, sourceTable);
+        return format("Created synonym '%s' for object '%s'", synonym, sourceTable);
     }
 
     @Override
@@ -193,11 +192,11 @@ public class CreateSynonymChange extends AbstractChange {
         this.schemaName = schemaName;
     }
 
-    public boolean isPublicSynonym() {
+    public Boolean isPublicSynonym() {
         return publicSynonym;
     }
 
-    public void setPublicSynonym(boolean publicSynonym) {
+    public void setPublicSynonym(Boolean publicSynonym) {
         this.publicSynonym = publicSynonym;
     }
 

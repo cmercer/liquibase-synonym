@@ -18,10 +18,10 @@ idea {
 
 
 dependencies {
+
+
     compile  (
         'org.liquibase:liquibase-core:2.0.5'
-
-
     )
 
     testCompile (
@@ -29,4 +29,8 @@ dependencies {
             'commons-lang:commons-lang:2.4',
             'org.apache.derby:derby:10.9.1.0'
     )
+
+    testCompile('org.reflections:reflections:0.9.8') {
+        exclude group: 'xml-apis', module: 'xml-apis'
+    }
 }

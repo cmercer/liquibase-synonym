@@ -9,13 +9,7 @@
                               http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <changeSet id="1" author="cmercer@github.com">
-        <createTable tableName="source-table">
-            <column name="id" type="java.sql.Types.INTEGER">
-                <constraints nullable="false"/>
-            </column>
-
-        </createTable>
-        <ext-syn:createSynonym synonymName="test-synonym" sourceObjectName="source-table"/>
+        <ext-syn:dropSynonym synonymName="test-synonym"/>
     </changeSet>
 
 

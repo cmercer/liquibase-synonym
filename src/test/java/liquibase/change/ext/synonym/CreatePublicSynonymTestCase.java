@@ -1,20 +1,18 @@
 package liquibase.change.ext.synonym;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import liquibase.database.Database;
 import liquibase.database.core.InformixDatabase;
 import liquibase.database.core.MSSQLDatabase;
 import liquibase.database.core.MaxDBDatabase;
-import liquibase.database.core.MySQLDatabase;
 import liquibase.database.core.OracleDatabase;
 import liquibase.sql.Sql;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CreatePublicSymTestCase {
+public class CreatePublicSynonymTestCase {
 
     private CreateSynonymStatement pubStatement;
     private CreateSynonymGenerator createSynonymGenerator;
@@ -52,34 +50,40 @@ public class CreatePublicSymTestCase {
     }
 
     @Test
-    public void testMySql() {
-        testDoesNotSupportPublic(new MySQLDatabase());
-    }
-
-    @Test
     public void testMsSql() {
         testDoesNotSupportPublic(new MSSQLDatabase());
     }
 
     protected void testSupportsPublic(Database database) {
-        String name = database.getDatabaseProductName();
+
+        String name = database.getTypeName();
+
         Sql[] withPublic = createSynonymGenerator.generateSql(pubStatement, database, null);
         assertTrue(
                 "public synonym did not gen for " + name,
-                withPublic[0].toSql().contains("CREATE PUBLIC SYNONYM SCHEMA")
+                withPublic[0].toSql().contains("CREATE PUBLIC SYNONYM")
         );
         Sql[] withoutPublic = createSynonymGenerator.generateSql(nonPubStatement, database, null);
         assertTrue(
                 "public synonym gen-d for " + name + " when public was false",
-                !withoutPublic[0].toSql().contains("CREATE PUBLIC SYNONYM")
+                withoutPublic[0].toSql().contains("CREATE SYNONYM")
         );
     }
 
     protected void testDoesNotSupportPublic(Database database) {
-        Sql[] withoutPublic = createSynonymGenerator.generateSql(pubStatement, database, null);
+
+        String name = database.getTypeName();
+
+        Sql[] withPublic = createSynonymGenerator.generateSql(pubStatement, database, null);
         assertTrue(
-                "public should not generate for " + database.getTypeName(),
-                withoutPublic[0].toSql().contains("CREATE SYNONYM SCHEMA")
+                "public should not generate for " + name,
+                withPublic[0].toSql().contains("CREATE SYNONYM")
+        );
+
+        Sql[] withoutPublic = createSynonymGenerator.generateSql(nonPubStatement, database, null);
+        assertTrue(
+                "public synonym gen-d for " + name + " when public was false, and when db does not support PUBLIC",
+                withoutPublic[0].toSql().contains("CREATE SYNONYM")
         );
     }
 }

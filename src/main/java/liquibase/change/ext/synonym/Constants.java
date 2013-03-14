@@ -2,7 +2,6 @@ package liquibase.change.ext.synonym;
 
 import static java.util.Collections.unmodifiableSet;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,6 +15,11 @@ import liquibase.database.core.OracleDatabase;
 
 
 public final class Constants {
+
+    /**
+     * Set of all {@link Database} that support synonyms to remote databases
+     */
+    public static final Set<Class<? extends Database>> SUPPORTS_REMOTE_SYNONYMS;
 
     /**
      * Set of all the {@link Database} that support synonyms
@@ -33,6 +37,11 @@ public final class Constants {
     public static final Set<Class<? extends Database>> SUPPORTS_REPLACE;
 
     static {
+
+        Set<Class<? extends Database>> supportsRemoteSynonyms = new HashSet<Class<? extends Database>>();
+        supportsRemoteSynonyms.add(MSSQLDatabase.class);
+        SUPPORTS_REMOTE_SYNONYMS = supportsRemoteSynonyms;
+
         Set<Class<? extends Database>> supportsSynonyms = new HashSet<Class<? extends Database>>();
         supportsSynonyms.add(OracleDatabase.class);
         supportsSynonyms.add(InformixDatabase.class);

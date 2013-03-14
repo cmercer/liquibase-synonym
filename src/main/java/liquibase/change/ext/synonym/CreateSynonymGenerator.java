@@ -1,19 +1,13 @@
 package liquibase.change.ext.synonym;
 
-import static liquibase.change.ext.synonym.Constants.SUPPORTS_PUBLIC;
-import static liquibase.change.ext.synonym.Constants.SUPPORTS_REPLACE;
-
 import liquibase.database.Database;
+import liquibase.database.structure.Schema;
 import liquibase.exception.ValidationErrors;
+import liquibase.sql.SingleLineComment;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.AbstractSqlGenerator;
-
-import static liquibase.util.StringUtils.trimToNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CreateSynonymGenerator extends AbstractSqlGenerator<CreateSynonymStatement> {
 
@@ -32,49 +26,66 @@ public class CreateSynonymGenerator extends AbstractSqlGenerator<CreateSynonymSt
     @Override
     public Sql[] generateSql(
             CreateSynonymStatement statement,
-            Database database,
+            Database delegateDatabase,
             SqlGeneratorChain sqlGeneratorChain) {
 
-        List<Sql> results = new ArrayList<Sql>();
-        StringBuilder builder = new StringBuilder();
+        SynonymDatabase database = new SynonymDatabase(delegateDatabase);
+        if(database.supportsSynonyms()) {
+            String schemaName = database.generateRealSchemaName(statement.getSchemaName());
+            StringBuilder builder = new StringBuilder();
 
-        builder.append("CREATE ");
-        if(statement.isReplaceIfExists() && supportsReplace(database)) {
-            builder.append("OR REPLACE ");
-        }
-        if(statement.isPublicSynonym() && supportsPublic(database)){
-        	builder.append("PUBLIC ");
-        }
-        builder.append("SYNONYM ");
-        if (trimToNull(statement.getSchemaName()) != null) {
-            builder.append(statement.getSchemaName()).append(".");
-        }
-        builder.append(statement.getSynonymName());
-        builder.append(" FOR ");
-        if (trimToNull(statement.getSourceDatabaseName()) != null) {
-            if (trimToNull(statement.getSourceServerName()) != null) {
-                builder.append(statement.getSourceServerName()).append(".");
+            builder.append("CREATE ");
+            builder.append(replaceIfNeeded(statement, database));
+            builder.append(publicIfNeeded(statement, database));
+            builder.append("SYNONYM ");
+            builder.append(database.escapeSynonymName(schemaName, statement.getSynonymName()));
+            builder.append(" FOR ");
+            builder.append(
+                    database.escapeRemoteObject(
+                        statement.getSourceServerName(),
+                        statement.getSourceDatabaseName(),
+                        statement.getSourceSchemaName(),
+                        statement.getSourceTableName()
+                )
+            );
+            builder.append(";");
+            UnparsedSql sql;
+
+            if(schemaName != null && database.supportsSchemas()) {
+                sql = new UnparsedSql(builder.toString(), database, new Schema(statement.getSchemaName()));
+            } else {
+                sql = new UnparsedSql(builder.toString(), database);
             }
-            builder.append(statement.getSourceDatabaseName()).append(".");
-        }
-        if (trimToNull(statement.getSourceSchemaName()) != null) {
-            builder.append(statement.getSourceSchemaName()).append(".");
-        }
-        builder.append(statement.getSourceTableName());
-        builder.append(";");
 
-        results.add(new UnparsedSql(builder.toString()));
-        return results.toArray(new Sql[results.size()]);
+            return new Sql[]{sql};
+        } else {
+
+            String synonymName = database.escapeSynonymName(
+                    database.generateRealSchemaName(statement.getSchemaName()),
+                    statement.getSynonymName()
+            );
+            StringBuilder builder = new StringBuilder();
+            builder.append("Database ").append(database.getTypeName()).append(" does not support synonyms")
+                    .append(" therefore synonym ").append(synonymName).append(" was not created\n");
+            return new Sql[]{new SingleLineComment(builder.toString(), database.getLineComment())};
+        }
     }
 
-    /**
-     * return true if the database supports public synonyms
-     */
-    protected boolean supportsPublic(Database database) {
-        return SUPPORTS_PUBLIC.contains(database.getClass());
+    protected String replaceIfNeeded(CreateSynonymStatement statement, SynonymDatabase database) {
+        String value = "";
+        if(statement.isReplaceIfExists() && database.supportsReplaceSynonyms()) {
+            value =  "OR REPLACE ";
+        }
+
+        return value;
     }
 
-    protected boolean supportsReplace(Database database) {
-        return SUPPORTS_REPLACE.contains(database.getClass());
+    protected String publicIfNeeded(CreateSynonymStatement statement, SynonymDatabase database) {
+        String value = "";
+        if(statement.isPublicSynonym() && database.supportsPublicSynonyms()) {
+            value = "PUBLIC ";
+        }
+
+        return value;
     }
 }
